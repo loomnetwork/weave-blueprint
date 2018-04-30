@@ -13,7 +13,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-func main() {}
+func main() {
+	plugin.Serve(Contract)
+}
 
 type BluePrint struct {
 }
