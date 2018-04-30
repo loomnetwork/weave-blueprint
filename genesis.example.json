@@ -1,0 +1,12 @@
+{
+    "contracts": [
+        {
+            "vm": "plugin",
+            "format": "plugin",
+            "location": "blueprint:0.0.1",
+            "init": {
+
+            }
+        }
+    ]
+}

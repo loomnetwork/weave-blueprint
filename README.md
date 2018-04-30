@@ -6,9 +6,15 @@ To Build
 ```
 export GOPATH=$GOPATH:`pwd`
 
-go build -buildmode=plugin -o out/cmds/create-tx.so src/cmd-plugins/create-tx/main.go
+make deps
+make
 ```
 
-To rebuild the protobuf files
+
+To Run (Requires Loom Dappchain engine binary)
 ```
-go build github.com/gogo/protobuf/protoc-gen-gogo
+cd run
+cp ../gensis.example.json .
+./loom init 
+./loom run
+```

@@ -1,6 +1,26 @@
 syntax = "proto3";
 
-message DummyTx {
-    string val = 1;
-    string key = 2;
+message BluePrintCreateAccountTx {
+	int32 version = 1;
+	string owner = 2;
+	bytes data = 3;
+}
+
+message BluePrintStateTx {
+	int32 version = 1;
+	string owner = 2;   
+	bytes data = 3;
+}
+
+message BluePrintAppState {
+	bytes address = 1;
+	bytes blob = 2;
+}
+
+message StateQueryParams {
+	string owner = 1;
+}
+
+message StateQueryResult {
+	bytes state = 1;
 }
