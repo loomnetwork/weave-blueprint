@@ -3,17 +3,19 @@ PROTOC = protoc --plugin=./protoc-gen-gogo -Ivendor -Isrc -I/usr/local/include
 
 .PHONY: all clean test lint deps proto
 
-all: internal-plugin blueprint-cli etherboy-indexer
+#blueprint-cli
+all: internal-plugin  
+#etherboy-indexer
 
-internal-plugin: blueprint.so
+internal-plugin: build/contracts/blueprint.0.0.1
 
-blueprint.so: proto
+build/contracts/blueprint.0.0.1: proto
 	mkdir -p build/contracts
-	go build -buildmode=plugin -o build/contracts/$@ src/blueprint.go
+	go build -o $@ src/blueprint.go
 
 blueprintcli: proto
-	mkdir -p build/cmds
-	go build -buildmode=plugin -o build/cmds/blueprint.so src/cmd-plugins/create-tx/plugin/create_tx.go
+#	mkdir -p build/cmds
+#	go build  -o build/cmds/blueprint.so src/cmd-plugins/create-tx/plugin/create_tx.go
 
 blueprint-indexer:
 	go build src/tools/cli/indexer
