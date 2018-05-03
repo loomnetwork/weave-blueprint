@@ -23,6 +23,8 @@ blueprint-indexer:
 protoc-gen-gogo:
 	go build github.com/gogo/protobuf/protoc-gen-gogo
 
+cli:
+	go build -o build/blueprint src/cli/main.go
 
 %.pb.go: %.proto protoc-gen-gogo
 	$(PROTOC) --gogo_out=src $<
