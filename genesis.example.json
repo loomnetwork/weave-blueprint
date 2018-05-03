@@ -3,6 +3,7 @@
         {
             "vm": "plugin",
             "format": "plugin",
+            "name": "BluePrint",
             "location": "blueprint:0.0.1",
             "init": {
 
