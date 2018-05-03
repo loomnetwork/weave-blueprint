@@ -44,8 +44,6 @@ func main() {
 			if err != nil {
 				return err
 			}
-			fmt.Println("Private Key---")
-			fmt.Println("%v\n", privKey)
 			signer := auth.NewEd25519Signer(privKey)
 			payload := &types.BluePrintCreateAccountTx{
 				Version: 1,
@@ -70,8 +68,6 @@ func main() {
 			if err != nil {
 				return errors.Wrap(err, "private key file not found")
 			}
-			fmt.Println("Private Key---")
-			fmt.Println("%v\n", privKey)
 			msgData := struct {
 				Value int
 			}{Value: value}
