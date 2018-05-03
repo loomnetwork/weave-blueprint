@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	var writeURI, readURI, contractHexAddr, chainID, privFile string
+	var writeURI, readURI, contractHexAddr, chainID, privFile, user string
 	rootCmd := &cobra.Command{
 		Use:   "blueprint",
 		Short: "blueprint example",
@@ -40,14 +40,16 @@ func main() {
 		Use:   "create-acct",
 		Short: "create-acct create an account used to store data",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, priv, err := ed25519.GenerateKey(nil)
+			privKey, err := ioutil.ReadFile(privFile)
 			if err != nil {
 				return err
 			}
-			signer := auth.NewEd25519Signer(priv)
+			fmt.Println("Private Key---")
+			fmt.Println("%v\n", privKey)
+			signer := auth.NewEd25519Signer(privKey)
 			payload := &types.BluePrintCreateAccountTx{
 				Version: 1,
-				Owner:   "blueprint",
+				Owner:   user,
 				Data:    []byte("my awesome profile"),
 			}
 			if _, err := contract.Call("CreateAccount", payload, signer, nil); err != nil {
@@ -56,6 +58,8 @@ func main() {
 			return nil
 		},
 	}
+	createAccCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
+	createAccCmd.Flags().StringVarP(&privFile, "key", "k", "", "private key file")
 
 	var value int
 	saveStateCmd := &cobra.Command{
@@ -66,7 +70,8 @@ func main() {
 			if err != nil {
 				return errors.Wrap(err, "private key file not found")
 			}
-
+			fmt.Println("Private Key---")
+			fmt.Println("%v\n", privKey)
 			msgData := struct {
 				Value int
 			}{Value: value}
@@ -77,8 +82,8 @@ func main() {
 			}
 
 			msg := &types.BluePrintStateTx{
-				Version: 1,
-				Owner:   "blueprint",
+				Version: 0,
+				Owner:   user,
 				Data:    data,
 			}
 
@@ -92,8 +97,9 @@ func main() {
 			return nil
 		},
 	}
-	saveStateCmd.Flags().StringVarP(&privFile, "key", "k", "priv_key", "private key file")
+	saveStateCmd.Flags().StringVarP(&privFile, "key", "k", "", "private key file")
 	saveStateCmd.Flags().IntVarP(&value, "value", "v", 0, "integer value")
+	saveStateCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
 
 	getStateCmd := &cobra.Command{
 		Use:   "get",
@@ -105,7 +111,7 @@ func main() {
 			}
 
 			params := &types.StateQueryParams{
-				Owner: "blueprint",
+				Owner: user,
 			}
 			signer := auth.NewEd25519Signer(privKey)
 			resp, err := contract.Call("GetState", params, signer, nil)
@@ -116,6 +122,8 @@ func main() {
 			return nil
 		},
 	}
+	getStateCmd.Flags().StringVarP(&privFile, "key", "k", "", "private key file")
+	getStateCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
 
 	keygenCmd := &cobra.Command{
 		Use:   "genkey",
