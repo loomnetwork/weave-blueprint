@@ -101,23 +101,18 @@ func main() {
 		Use:   "get",
 		Short: "get state",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			privKey, err := ioutil.ReadFile(privFile)
-			if err != nil {
-				return errors.Wrap(err, "private key file not found")
-			}
-
+			var result types.StateQueryResult
 			params := &types.StateQueryParams{
 				Owner: user,
 			}
-			signer := auth.NewEd25519Signer(privKey)
-			resp, err := contract.Call("GetState", params, signer, nil)
-			if err != nil {
+			if _, err := contract.StaticCall("GetState", params, &result); err != nil {
 				return err
 			}
-			fmt.Printf("--> resp: %v", resp)
+			fmt.Println(string(result.State))
 			return nil
 		},
 	}
+
 	getStateCmd.Flags().StringVarP(&privFile, "key", "k", "", "private key file")
 	getStateCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
 
