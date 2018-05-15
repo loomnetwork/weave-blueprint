@@ -1,24 +1,15 @@
-PKG = github.com/loomnetwork/etherboy-core
+PKG = github.com/loomnetwork/weave-blueprint
 PROTOC = protoc --plugin=./protoc-gen-gogo -Ivendor -Isrc -I/usr/local/include
 
 .PHONY: all clean test lint deps proto
 
-#blueprint-cli
-all: internal-plugin  
-#etherboy-indexer
+all: internal-plugin
 
 internal-plugin: build/contracts/blueprint.0.0.1
 
 build/contracts/blueprint.0.0.1: proto
 	mkdir -p build/contracts
 	go build -o $@ src/blueprint.go
-
-blueprintcli: proto
-#	mkdir -p build/cmds
-#	go build  -o build/cmds/blueprint.so src/cmd-plugins/create-tx/plugin/create_tx.go
-
-blueprint-indexer:
-	go build src/tools/cli/indexer
 
 protoc-gen-gogo:
 	go build github.com/gogo/protobuf/protoc-gen-gogo
@@ -53,5 +44,4 @@ clean:
 		protoc-gen-gogo \
 		src/types/types.pb.go \
 		testdata/test.pb.go \
-		run/contracts/etherboy.so \
-		run/cmds/etherboyclu.so
+
