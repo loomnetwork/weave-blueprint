@@ -36,7 +36,9 @@ deps:
 		github.com/gomodule/redigo/redis \
 		github.com/loomnetwork/go-loom \
 		github.com/hashicorp/go-plugin \
-		github.com/pkg/errors
+		github.com/pkg/errors \
+		github.com/grpc-ecosystem/go-grpc-prometheus \
+		go get github.com/go-kit/kit/log
 
 clean:
 	go clean
