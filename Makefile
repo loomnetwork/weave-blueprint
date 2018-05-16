@@ -38,7 +38,7 @@ deps:
 		github.com/hashicorp/go-plugin \
 		github.com/pkg/errors \
 		github.com/grpc-ecosystem/go-grpc-prometheus \
-		go get github.com/go-kit/kit/log
+		github.com/go-kit/kit/log
 
 clean:
 	go clean
