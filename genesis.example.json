@@ -8,6 +8,15 @@
             "init": {
 
             }
+        },
+        {
+            "vm": "plugin",
+            "format": "plugin",
+            "name": "helloworld",
+            "location": "helloworld:1.0.0",
+            "init": {
+
+            }
         }
     ]
 }

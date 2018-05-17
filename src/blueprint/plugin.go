@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"types"
+	"blueprint/types"
 
 	loom "github.com/loomnetwork/go-loom"
 	"github.com/loomnetwork/go-loom/plugin"

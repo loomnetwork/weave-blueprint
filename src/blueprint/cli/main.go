@@ -1,12 +1,12 @@
 package main
 
 import (
+	"blueprint/types"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-	"types"
 
 	"github.com/loomnetwork/go-loom"
 	"github.com/loomnetwork/go-loom/auth"

@@ -3,24 +3,32 @@ PROTOC = protoc --plugin=./protoc-gen-gogo -Ivendor -Isrc -I/usr/local/include
 
 .PHONY: all clean test lint deps proto
 
-all: internal-plugin
+all: blueprint-plugin helloworld-plugin
+cli: blueprint-cli
 
-internal-plugin: build/contracts/blueprint.0.0.1
+blueprint-plugin: build/contracts/blueprint.0.0.1
+helloworld-plugin: build/contracts/helloworld.1.0.0
 
 build/contracts/blueprint.0.0.1: proto
 	mkdir -p build/contracts
-	go build -o $@ src/blueprint.go
+	go build -o $@ src/blueprint/plugin.go
+
+build/contracts/helloworld.1.0.0: proto
+	mkdir -p build/contracts
+	go build -o $@ src/helloworld/plugin.go
 
 protoc-gen-gogo:
 	go build github.com/gogo/protobuf/protoc-gen-gogo
 
-cli:
-	go build -o build/blueprint src/cli/main.go
+blueprint-cli:
+	go build -o build/blueprint src/blueprint/cli/main.go
 
 %.pb.go: %.proto protoc-gen-gogo
 	$(PROTOC) --gogo_out=src $<
 
-proto: src/types/types.proto src/types/types.pb.go
+proto: \
+	src/blueprint/types/types.pb.go \
+	src/helloworld/types/types.pb.go
 
 test: proto
 	go test $(PKG)/...
@@ -44,6 +52,6 @@ clean:
 	go clean
 	rm -f \
 		protoc-gen-gogo \
-		src/types/types.pb.go \
-		testdata/test.pb.go \
+		src/blueprint/types/types.pb.go \
+		src/helloworld/types/types.pb.go
 
