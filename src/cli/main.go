@@ -34,7 +34,7 @@ func main() {
 	// create rpc client
 	rpcClient := client.NewDAppChainRPCClient(chainID, writeURI, readURI)
 	// create contract
-	contract := client.NewContract(rpcClient, contractAddr, "BluePrint")
+	contract := client.NewContract(rpcClient, contractAddr)
 	//  create account cmd
 	createAccCmd := &cobra.Command{
 		Use:   "create-acct",
