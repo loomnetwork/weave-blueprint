@@ -2,6 +2,8 @@
 
 Sample Loom Blockchain project *GO Language*
 
+For more info please checkout the docs page for the [Loom SDK](https://loomx.io/developers/docs/en/prereqs.html)
+
 To Build
 ```
 export GOPATH=$GOPATH:`pwd`
