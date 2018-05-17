@@ -1,0 +1,17 @@
+language: go
+sudo: required
+
+addons:
+  apt:
+    packages:
+    - unzip
+    - curl
+
+before_install:
+  - ./.travis_before_install.sh
+
+script:
+  - ./.sh
+
+go:
+  - 1.10.x
