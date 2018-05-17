@@ -22,7 +22,7 @@ cp ../genesis.example.json genesis.json
 
 loom run > run.log 2>&1 &
 
-sleep 10
+sleep 20
 
 # Run sample transactions to test
 
