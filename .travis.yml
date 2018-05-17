@@ -11,7 +11,7 @@ before_install:
   - ./.travis_before_install.sh
 
 script:
-  - ./.sh
+  - ./.travis.sh
 
 go:
   - 1.10.x
