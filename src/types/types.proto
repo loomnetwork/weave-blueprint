@@ -24,3 +24,8 @@ message StateQueryParams {
 message StateQueryResult {
 	bytes state = 1;
 }
+
+message MapEntry {
+    string key = 1;
+    string value = 2;
+}

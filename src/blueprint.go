@@ -101,4 +101,26 @@ func (s *BluePrint) ownerKey(owner string) []byte {
 	return []byte("owner:" + owner)
 }
 
+func (e *BluePrint) SetMsg(ctx contract.Context, req *types.MapEntry) error {
+	return ctx.Set([]byte(req.Key), req)
+}
+
+func (e *BluePrint) SetMsgEcho(ctx contract.Context, req *types.MapEntry) (*types.MapEntry, error) {
+	if err := ctx.Set([]byte(req.Key), req); err != nil {
+		return nil, err
+	}
+	return &types.MapEntry{
+		Key:   req.Key,
+		Value: req.Value,
+	}, nil
+}
+
+func (e *BluePrint) GetMsg(ctx contract.StaticContext, req *types.MapEntry) (*types.MapEntry, error) {
+	var result types.MapEntry
+	if err := ctx.Get([]byte(req.Key), &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
 var Contract plugin.Contract = contract.MakePluginContract(&BluePrint{})
