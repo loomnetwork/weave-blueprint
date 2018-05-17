@@ -34,6 +34,6 @@ cd ..
 ./build/blueprint get
 
 pkill -f loom
-pkill -f blueprint.0.0.1
+pkill blueprint.0.0.1
 
 cat build/run.log
