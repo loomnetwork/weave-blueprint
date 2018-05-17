@@ -1,5 +1,5 @@
 PKG = github.com/loomnetwork/weave-blueprint
-PROTOC = protoc --plugin=./protoc-gen-gogo -Ivendor -Isrc -I/usr/local/include
+PROTOC = protoc --plugin=./protoc-gen-gogo -Isrc -I/usr/local/include
 
 .PHONY: all clean test lint deps proto
 
