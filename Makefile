@@ -3,9 +3,9 @@ PROTOC = protoc --plugin=./protoc-gen-gogo -Ivendor -Isrc -I/usr/local/include
 
 .PHONY: all clean test lint deps proto
 
-all: internal-plugin
+all: contracts cli
 
-internal-plugin: build/contracts/blueprint.0.0.1
+contracts: build/contracts/blueprint.0.0.1
 
 build/contracts/blueprint.0.0.1: proto
 	mkdir -p build/contracts
