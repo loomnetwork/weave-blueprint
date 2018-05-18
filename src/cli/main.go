@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -44,6 +45,12 @@ func main() {
 			if err != nil {
 				return err
 			}
+
+			privKey, err = base64.StdEncoding.DecodeString(string(privKey))
+			if err != nil {
+				log.Fatalf("Cannot read priv file: %s", privFile)
+			}
+
 			signer := auth.NewEd25519Signer(privKey)
 			payload := &types.BluePrintCreateAccountTx{
 				Version: 1,
