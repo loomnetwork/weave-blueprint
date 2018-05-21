@@ -15,3 +15,6 @@
 
 out
 protoc-gen-gogo
+build
+loom.log
+contract.log

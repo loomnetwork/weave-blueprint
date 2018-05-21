@@ -15,8 +15,8 @@ make
 
 To Run (Requires Loom Dappchain engine binary)
 ```
-cd run
-cp ../gensis.example.json .
+cd build
 ./loom init
+cp ../genesis.example.json genesis.json
 ./loom run
 ```

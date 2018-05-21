@@ -28,9 +28,9 @@ sleep 10
 
 cd ..
 
-./build/blueprint genkey
-./build/blueprint create-acct
-./build/blueprint set -v 1
+loom genkey -k priv_key -a pub_key
+./build/blueprint create-acct -k priv_key
+./build/blueprint set -v 1 -k priv_key
 ./build/blueprint get
 
 pkill -f loom
