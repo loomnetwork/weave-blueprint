@@ -9,33 +9,34 @@ import (
 	"os"
 	"types"
 
-	"github.com/loomnetwork/go-loom"
 	"github.com/loomnetwork/go-loom/auth"
 	"github.com/loomnetwork/go-loom/client"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ed25519"
 )
 
 func main() {
-	var writeURI, readURI, contractHexAddr, chainID, privFile, user string
+	var writeURI, readURI, contractName, chainID, privFile, user string
 	rootCmd := &cobra.Command{
 		Use:   "blueprint",
 		Short: "blueprint example",
 	}
 	rootCmd.PersistentFlags().StringVarP(&writeURI, "write", "w", "http://localhost:46658/rpc", "URI for sending txs")
 	rootCmd.PersistentFlags().StringVarP(&readURI, "read", "r", "http://localhost:46658/query", "URI for quering app state")
-	rootCmd.PersistentFlags().StringVarP(&contractHexAddr, "contract", "", "0x005B17864f3adbF53b1384F2E6f2120c6652F779", "contract address")
+	rootCmd.PersistentFlags().StringVarP(&contractName, "contract", "", "BluePrint", "contract address")
 	rootCmd.PersistentFlags().StringVarP(&chainID, "chain", "", "default", "chain ID")
 
-	contractAddr, err := loom.LocalAddressFromHexString(contractHexAddr)
+	// create rpc client
+	rpcClient := client.NewDAppChainRPCClient(chainID, writeURI, readURI)
+
+	contractAddr, err := rpcClient.Resolve(contractName)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// create rpc client
-	rpcClient := client.NewDAppChainRPCClient(chainID, writeURI, readURI)
+
 	// create contract
-	contract := client.NewContract(rpcClient, contractAddr)
+	contract := client.NewContract(rpcClient, contractAddr.Local)
+
 	//  create account cmd
 	createAccCmd := &cobra.Command{
 		Use:   "create-acct",
@@ -78,6 +79,11 @@ func main() {
 			msgData := struct {
 				Value int
 			}{Value: value}
+
+			privKey, err = base64.StdEncoding.DecodeString(string(privKey))
+			if err != nil {
+				log.Fatalf("Cannot read priv file: %s", privFile)
+			}
 
 			data, err := json.Marshal(msgData)
 			if err != nil {
@@ -123,27 +129,9 @@ func main() {
 	getStateCmd.Flags().StringVarP(&privFile, "key", "k", "", "private key file")
 	getStateCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
 
-	keygenCmd := &cobra.Command{
-		Use:   "genkey",
-		Short: "generate a public and private key pair",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			_, priv, err := ed25519.GenerateKey(nil)
-			if err != nil {
-				return errors.Wrap(err, "Error generating key pair")
-			}
-			if err := ioutil.WriteFile(privFile, priv, 0664); err != nil {
-				return errors.Wrap(err, "Unable to write private key file")
-			}
-			fmt.Printf("generated private key file '%s'\n", privFile)
-			return nil
-		},
-	}
-	keygenCmd.Flags().StringVarP(&privFile, "key", "k", "priv_key", "private key file")
-
 	rootCmd.AddCommand(createAccCmd)
 	rootCmd.AddCommand(saveStateCmd)
 	rootCmd.AddCommand(getStateCmd)
-	rootCmd.AddCommand(keygenCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
