@@ -28,7 +28,6 @@ sleep 10
 
 cd ..
 
-./build/blueprint genkey
 ./build/blueprint create-acct
 ./build/blueprint set -v 1
 ./build/blueprint get
