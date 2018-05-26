@@ -121,7 +121,7 @@ func (e *BluePrint) SetMsgEcho(ctx contract.Context, req *types.MapEntry) (*type
 		Method string
 		Key    string
 		Value  string
-	}{Method: "SetMsg", Key: req.Key, Value: req.Value}
+	}{Method: "SetMsgEcho", Key: req.Key, Value: req.Value}
 	eventJSON, err := json.Marshal(&eventData)
 	if err != nil {
 		log.Println("Error marshalling emit message")
