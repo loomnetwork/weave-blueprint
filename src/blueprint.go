@@ -102,10 +102,32 @@ func (s *BluePrint) ownerKey(owner string) []byte {
 }
 
 func (e *BluePrint) SetMsg(ctx contract.Context, req *types.MapEntry) error {
+	eventData := struct {
+		Method string
+		Key    string
+		Value  string
+	}{Method: "SetMsg", Key: req.Key, Value: req.Value}
+	eventJSON, err := json.Marshal(&eventData)
+	if err != nil {
+		log.Println("Error marshalling emit message")
+	}
+	ctx.Emit(eventJSON)
+
 	return ctx.Set([]byte(req.Key), req)
 }
 
 func (e *BluePrint) SetMsgEcho(ctx contract.Context, req *types.MapEntry) (*types.MapEntry, error) {
+	eventData := struct {
+		Method string
+		Key    string
+		Value  string
+	}{Method: "SetMsg", Key: req.Key, Value: req.Value}
+	eventJSON, err := json.Marshal(&eventData)
+	if err != nil {
+		log.Println("Error marshalling emit message")
+	}
+	ctx.Emit(eventJSON)
+
 	if err := ctx.Set([]byte(req.Key), req); err != nil {
 		return nil, err
 	}
