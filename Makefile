@@ -60,9 +60,6 @@ clean:
 		src/types/types.pb.go \
 		testdata/test.pb.go \
 
-checkgopath:
-	echo $(GOPATH)
-
 protoc-install:
 ifeq ($(BREW),)
 	curl -OL https://github.com/google/protobuf/releases/download/v$(PROTOBUF_VERSION)/protoc-${PROTOBUF_VERSION}-$(PLATFORM)-x86_64.zip \
