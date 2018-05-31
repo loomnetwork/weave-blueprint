@@ -7,7 +7,8 @@ curl -OL https://storage.googleapis.com/private.delegatecall.com/loom/linux/buil
 chmod +x loom
 sudo mv loom /usr/local/bin/loom
 
-export GOPATH=$GOPATH:`pwd`
+# Install protobuf
+make protobuf-install
 
 # Run the build
 make deps
