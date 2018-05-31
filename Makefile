@@ -60,10 +60,10 @@ clean:
 		src/types/types.pb.go \
 		testdata/test.pb.go \
 
-protoc-install:
+protobuf-install:
 ifeq ($(BREW),)
 	curl -OL https://github.com/google/protobuf/releases/download/v$(PROTOBUF_VERSION)/protoc-${PROTOBUF_VERSION}-$(PLATFORM)-x86_64.zip \
-	&& sudo unzip protoc-$(PROTOBUF_VERSION)-$(PLATFORM)-x86_64.zip -d /usr/local
+	&& sudo unzip protoc-$(PROTOBUF_VERSION)-$(PLATFORM)-x86_64.zip -d /usr/local && rm protoc-$(PROTOBUF_VERSION)-$(PLATFORM)-x86_64.zip
 else
 	$(BREW) install protobuf
 endif
