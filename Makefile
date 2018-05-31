@@ -63,7 +63,9 @@ clean:
 protobuf-install:
 ifeq ($(BREW),)
 	curl -OL https://github.com/google/protobuf/releases/download/v$(PROTOBUF_VERSION)/protoc-${PROTOBUF_VERSION}-$(PLATFORM)-x86_64.zip \
-	&& sudo unzip protoc-$(PROTOBUF_VERSION)-$(PLATFORM)-x86_64.zip -d /usr/local && rm protoc-$(PROTOBUF_VERSION)-$(PLATFORM)-x86_64.zip
+	&& sudo unzip protoc-$(PROTOBUF_VERSION)-$(PLATFORM)-x86_64.zip -d /usr/local && sudo chmod 755 /usr/local/bin/protoc \
+	&& sudo find /usr/local/include/google -type d -exec chmod 755 -- {} + && sudo find /usr/local/include/google -type f -exec chmod 644 -- {} + \
+	&& rm protoc-$(PROTOBUF_VERSION)-$(PLATFORM)-x86_64.zip
 else
 	$(BREW) install protobuf
 endif
