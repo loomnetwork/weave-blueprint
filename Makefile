@@ -12,8 +12,6 @@ ifeq ($(UNAME_S),Darwin)
 	BREW = $(shell which brew)
 endif
 
-export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
-
 .PHONY: all clean test lint deps proto
 
 all: contracts cli
