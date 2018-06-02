@@ -13,6 +13,12 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+# Mac OS X file
+.DS_Store
+
+# Jetbrains project meta folder
+.idea/*
+
 out
 protoc-gen-gogo
 build

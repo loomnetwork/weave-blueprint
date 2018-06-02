@@ -30,9 +30,9 @@ sleep 10
 cd ..
 
 loom genkey -k priv_key -a pub_key
-./build/blueprint create-acct -k priv_key
-./build/blueprint set -v 1 -k priv_key
-./build/blueprint get
+./build/blueprint call create-acct -p priv_key
+./build/blueprint call set -v 1 -p priv_key
+./build/blueprint call get
 
 pkill -f loom
 
