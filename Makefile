@@ -30,6 +30,10 @@ protoc-gen-gogo:
 cli:
 	go build -o build/blueprint src/cli/main.go
 
+latencycmd:
+	go build -o latencycmd src/latencycmd/*.go
+	
+
 %.pb.go: %.proto protoc-gen-gogo
 	$(PROTOC) --gogo_out=src $<
 
