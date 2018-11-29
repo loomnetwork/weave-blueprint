@@ -123,6 +123,11 @@ func main() {
 	go func() {
 		defer wg.Done()
 		defer func(begin time.Time) {
+                //Measures time lapse when data is first seen in North CA node
+			lvs := []string{"method", "read", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-north_ca-0"}
+			requestCount.With(lvs...).Add(1)
+			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+		}(time.Now())
 
 			for {
 				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", "54.183.107.171")
@@ -139,18 +144,18 @@ func main() {
 				}
 
 			}
-      //Measures time lapse when data is first seen in North CA node
-			lvs := []string{"method", "read", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-north_ca-0"}
-			requestCount.With(lvs...).Add(1)
-			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-		}(time.Now())
+      
 	}()
 
 //This Go Routine polls Tokyo Node
 	go func() {
 		defer wg.Done()
 		defer func(begin time.Time) {
-
+                //Measures time lapse when data is first seen in Tokyo node
+			lvs := []string{"method", "read", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-tokyo-0"}
+			requestCount.With(lvs...).Add(1)
+			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+		}(time.Now())
 			for {
 				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", "52.198.14.57")
 				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", "52.198.14.57")
@@ -165,11 +170,7 @@ func main() {
 
 			}
 
-			//Measures time lapse when data is first seen in Tokyo node
-			lvs := []string{"method", "read", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-tokyo-0"}
-			requestCount.With(lvs...).Add(1)
-			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-		}(time.Now())
+			
 	}()
 
 	//Exit when polling on all nodes is completes
