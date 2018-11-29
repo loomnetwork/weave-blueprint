@@ -124,7 +124,7 @@ func main() {
 		defer wg.Done()
 		defer func(begin time.Time) {
                 //Measures time lapse when data is first seen in North CA node
-			lvs := []string{"method", "read", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-north_ca-0"}
+			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-north_ca-0"}
 			requestCount.With(lvs...).Add(1)
 			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 		}(time.Now())
@@ -152,7 +152,7 @@ func main() {
 		defer wg.Done()
 		defer func(begin time.Time) {
                 //Measures time lapse when data is first seen in Tokyo node
-			lvs := []string{"method", "read", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-tokyo-0"}
+			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-tokyo-0"}
 			requestCount.With(lvs...).Add(1)
 			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 		}(time.Now())
