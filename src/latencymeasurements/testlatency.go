@@ -23,6 +23,7 @@ var reg = prometheus.NewRegistry()
 
 var requestCount metrics.Counter
 var requestLatency metrics.Histogram
+var requestLatencySummary metrics.Histogram
 
 type Server struct {
 	Name         string `yaml:name`
@@ -57,11 +58,20 @@ func main() {
 		Name:      "request_count",
 		Help:      "Number of requests received.",
 	}, fieldKeys)
-	requestLatency = kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+   //Added bucket data point for histogram_quantile
+	requestLatency = kitprometheus.NewHistogramFrom(stdprometheus.HistogramOpts{
 		Namespace: "loomchain",
 		Subsystem: "tx_service",
-		Name:      "request_latency_microseconds",
-		Help:      "Total duration of requests in microseconds.",
+		Name:      "request_latency",
+		Help:      "Total duration of requests",
+		Buckets: []float64{0.001,0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10},
+
+		}, fieldKeys)
+	requestLatencySummary = kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+		Namespace: "loomchain",
+		Subsystem: "tx_service",
+		Name:      "request_latency_summary",
+		Help:      "Total duration of requests",
 	}, fieldKeys)
 
 	// default hostport for metrics
@@ -127,7 +137,9 @@ func main() {
 			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-north_ca-0"}
 			requestCount.With(lvs...).Add(1)
 			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-		}(time.Now())
+			requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
+
+			}(time.Now())
 
 			for {
 				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", "54.183.107.171")
@@ -155,7 +167,10 @@ func main() {
 			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-tokyo-0"}
 			requestCount.With(lvs...).Add(1)
 			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-		}(time.Now())
+			requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
+
+
+			}(time.Now())
 			for {
 				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", "52.198.14.57")
 				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", "52.198.14.57")
@@ -177,7 +192,7 @@ func main() {
 	wg.Wait()
         //prometheus.yaml is configured to scrape metrics from this application 
 	fmt.Printf("sleeping for final prometheus metrics\n")
-	time.Sleep(10 * time.Second)
+	time.Sleep(3 * time.Second)
 }
 
 func read(t *TxConn, data, name string) (err error) {
@@ -185,7 +200,8 @@ func read(t *TxConn, data, name string) (err error) {
 		lvs := []string{"method", "read", "error", fmt.Sprint(err != nil), "server", name}
 		requestCount.With(lvs...).Add(1)
 		requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-	}(time.Now())
+		requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
+		}(time.Now())
 
 	fmt.Printf("reading from %v\n", t)
 	params := &types.MapEntry{
@@ -208,7 +224,9 @@ func write(t *TxConn, data, name string) (err error) {
 		lvs := []string{"method", "write", "error", fmt.Sprint(err != nil), "server", name}
 		requestCount.With(lvs...).Add(1)
 		requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-	}(time.Now())
+		requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
+
+		}(time.Now())
 
 	fmt.Printf("writing to %v\n", t)
 
