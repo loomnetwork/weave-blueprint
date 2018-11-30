@@ -11,6 +11,7 @@ import (
 	"github.com/loomnetwork/go-loom/auth"
 	"github.com/loomnetwork/go-loom/cli"
 	"github.com/loomnetwork/go-loom/client"
+	"path/filepath"
 )
 
 type TxConn struct {
@@ -75,12 +76,15 @@ func (n *TxConn) InitContract(contractAddrStr string) error {
 }
 
 func NewtxConn(wurl, rurl, contract string) *TxConn {
+
+	absPath, _ := filepath.Abs("weave-blueprint/build/key")
+
 	t := &TxConn{
 		WriteURI:     wurl,
 		ReadURI:      rurl,
 		ContractAddr: contract,
 		ChainID:      "default",
-		PrivFile:     "/root/weaveblueprint/weave-blueprint/build/key",
+		PrivFile:     absPath,
 	}
 	err := t.InitContract(t.ContractAddr)
 	if err != nil {

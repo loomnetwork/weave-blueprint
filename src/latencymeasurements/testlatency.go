@@ -16,6 +16,7 @@ import (
 	"os"
 	"sync"
 	"time"
+	"path/filepath"
 )
 
 var defaultContract = "BluePrint"
@@ -97,8 +98,8 @@ func main() {
 	var c Servers
 	//var s1 Servers
 	//conns := map[string]*TxConn{}
-
-	b, err := ioutil.ReadFile("/root/weaveblueprint/weave-blueprint/src/latencycmd/nodelist.yaml")
+	absPath, _ := filepath.Abs("weave-blueprint/src/latencymeasurements/nodelist.yaml")
+	b, err := ioutil.ReadFile(absPath)
 
 	if err != nil {
 		fmt.Print(err)
