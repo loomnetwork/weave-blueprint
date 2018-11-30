@@ -8,6 +8,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/segmentio/ksuid"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -48,7 +49,7 @@ type MessageData struct {
 }
 */
 
-func worker(c Servers, id int, wg *sync.WaitGroup) (err1 error){
+func worker(c Servers, id int, data string, wg *sync.WaitGroup) (err1 error){
 	defer wg.Done()
 	defer func(begin time.Time) {
 		//Measures time lapse when data is first seen in Second node
@@ -67,7 +68,7 @@ func worker(c Servers, id int, wg *sync.WaitGroup) (err1 error){
 		t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 		conns2[c[id].Name] = t
 
-		err1 := read(t, "20", c[id].Name)
+		err1 := read(t,data,c[id].Name)
 
 		if err1 == nil {
 			//If read successfull while polling exit from go routine
@@ -155,7 +156,7 @@ func main() {
 
 	fmt.Printf("configdata - %v -%s\n", c, c[0].Extipaddress)
     var id =0;
-
+	data := ksuid.New().String()
 	wg.Add(len(c)-1)
 
 	for _, v := range c {
@@ -170,14 +171,14 @@ func main() {
 			t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 			conns1[v.Name] = t
 
-			err := write(t, "20", v.Name)
+			err := write(t, data , v.Name)
 			if err != nil {
 				fmt.Printf("write error -%s\n", err.Error())
 			}
 			//Writing Key Value to First Node in File
 		} else {
            //Submit task to worker
-		    go worker(c, id, &wg)
+		    go worker(c, id, data, &wg)
 		}
 
 		id ++
