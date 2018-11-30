@@ -33,6 +33,11 @@ cli:
 latencycmd:
 	go build -o latencycmd src/latencycmd/*.go
 	
+latencymeasurements:
+	go get \
+		gopkg.in/yaml.v2 \
+		github.com/loomnetwork/weave-blueprint/src
+	go build -o latencymeasurements src/latencymeasurements/*.go
 
 %.pb.go: %.proto protoc-gen-gogo
 	$(PROTOC) --gogo_out=src $<
