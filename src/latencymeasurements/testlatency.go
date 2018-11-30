@@ -17,6 +17,7 @@ import (
 	"sync"
 	"time"
 	"path/filepath"
+	"github.com/segmentio/ksuid"
 )
 
 var defaultContract = "BluePrint"
@@ -76,7 +77,7 @@ func main() {
 	}, fieldKeys)
 
 	// default hostport for metrics
-	var hostport = "0.0.0.0:9091"
+	var hostport = "127.0.0.1:9091"
 	host, port, err := net.SplitHostPort(hostport)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "invalid metric address: %s", err)
@@ -114,7 +115,7 @@ func main() {
 	}
 
 	fmt.Printf("configdata - %v -%s\n", c, c[0].Extipaddress)
-
+	data := ksuid.New().String()
 
 //Writing Key Value to First Node in File
 	serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", c[0].Extipaddress)
@@ -124,7 +125,7 @@ func main() {
 	t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 	conns1[c[0].Name] = t
 
-	err = write(t, "20", c[0].Name)
+	err = write(t,data, c[0].Name)
 	if err != nil {
 		fmt.Printf("write error -%s\n", err.Error())
 	}
@@ -149,7 +150,7 @@ func main() {
 				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 				conns2[c[1].Name] = t
 
-				err1 := read(t, "20", c[1].Name)
+				err1 := read(t, data, c[1].Name)
 
 				if err1 == nil {
                 //If read successfull while polling exit from go routine
@@ -178,7 +179,7 @@ func main() {
 				conns3 := map[string]*TxConn{}
 				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 				conns3[c[2].Name] = t
-				err2 := read(t, "20",c[2].Name)
+				err2 := read(t,data,c[2].Name)
 				if err2 == nil {
 					//If read successfull while polling exit from go routine
 					return
