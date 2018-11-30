@@ -9,6 +9,7 @@ import (
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/stefantalpalaru/pool"
+	"github.com/segmentio/ksuid"
 	"gopkg.in/yaml.v2"
     "io/ioutil"
     "log"
@@ -55,7 +56,8 @@ func work(args...interface{}) interface{} {
 
 	c := args[0].(Servers)
 	id := args[1].(int)
-	wg  := args[2].(*sync.WaitGroup)
+	data := args[2].(string)
+	wg  := args[3].(*sync.WaitGroup)
     var err1 error
 
 	defer wg.Done()
@@ -76,7 +78,7 @@ func work(args...interface{}) interface{} {
 		t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 		conns2[c[id].Name] = t
 
-		err1 := read(t, "20", c[id].Name)
+		err1 := read(t,data, c[id].Name)
 
 		if err1 == nil {
 			//If read successfull while polling exit from go routine
@@ -164,6 +166,8 @@ func main() {
 	cpus := runtime.NumCPU()
 	runtime.GOMAXPROCS(cpus)
 	mypool.Run()
+	data := ksuid.New().String()
+
 	for _, v := range c {
 
 	    if id  == 0 {
@@ -176,14 +180,16 @@ func main() {
 			t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 			conns1[v.Name] = t
 
-			err := write(t, "20", v.Name)
+
+
+			err := write(t, data, v.Name)
 			if err != nil {
 				fmt.Printf("write error -%s\n", err.Error())
 			}
 			//Writing Key Value to First Node in File
 		} else {
            //Submit task to worker
-			mypool.Add(work,c, id, &wg)
+			mypool.Add(work,c,id,data,&wg)
 		}
 
 		id ++
