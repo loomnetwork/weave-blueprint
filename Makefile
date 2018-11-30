@@ -36,6 +36,7 @@ latencycmd:
 latencymeasurements:
 	go get \
 		gopkg.in/yaml.v2 \
+                github.com/segmentio/ksuid \
 		github.com/loomnetwork/weave-blueprint/src
 	go build -o latencymeasurements src/latencymeasurements/*.go
 
