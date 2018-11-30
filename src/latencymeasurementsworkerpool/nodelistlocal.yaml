@@ -1,0 +1,4 @@
+- name: localhost
+  extipaddress: 0.0.0.0
+  region: asia
+  subnet: subnet-03f59fd2f6202153d

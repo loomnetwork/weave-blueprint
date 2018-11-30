@@ -1,0 +1,12 @@
+- name: perftest-suhas-north_ca-0
+  extipaddress: 54.183.107.171
+  region: us-west-1
+  subnet: subnet-0ada6a053938bb57b
+- name: perftest-suhas-tokyo-0
+  extipaddress: 52.198.14.57
+  region: ap-northeast-1
+  subnet: subnet-07c1260341c2adf2c
+- name: perftest-suhas-frankfurt-0
+  extipaddress: 18.184.73.130
+  region: eu-central-1
+  subnet: subnet-03f59fd2f6202153d
