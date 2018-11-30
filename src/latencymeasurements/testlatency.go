@@ -116,26 +116,26 @@ func main() {
 	fmt.Printf("configdata - %v -%s\n", c, c[0].Extipaddress)
 
 
-//Writing Key Value to FrankFurt Node
-	serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", "18.184.73.130")
-	serverUrlQuery := fmt.Sprintf("http://%s:46658/query", "18.184.73.130")
+//Writing Key Value to First Node in File
+	serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", c[0].Extipaddress)
+	serverUrlQuery := fmt.Sprintf("http://%s:46658/query", c[0].Extipaddress)
 	conns1 := map[string]*TxConn{}
 
 	t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
-	conns1["perftest-suhas-frankfurt-0"] = t
+	conns1[c[0].Name] = t
 
-	err = write(t, "20", "perftest-suhas-frankfurt-0")
+	err = write(t, "20", c[0].Name)
 	if err != nil {
 		fmt.Printf("write error -%s\n", err.Error())
 	}
 
 
-//This Go routine polls North CA node
+//This Go routine polls  Second node
 	go func() {
 		defer wg.Done()
 		defer func(begin time.Time) {
-                //Measures time lapse when data is first seen in North CA node
-			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-north_ca-0"}
+                //Measures time lapse when data is first seen in Second node
+			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", c[1].Name}
 			requestCount.With(lvs...).Add(1)
 			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 			requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
@@ -143,13 +143,13 @@ func main() {
 			}(time.Now())
 
 			for {
-				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", "54.183.107.171")
-				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", "54.183.107.171")
+				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc",  c[1].Extipaddress)
+				serverUrlQuery := fmt.Sprintf("http://%s:46658/query",  c[1].Extipaddress)
 				conns2 := map[string]*TxConn{}
 				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
-				conns2[" perftest-suhas-north_ca-0"] = t
+				conns2[c[1].Name] = t
 
-				err1 := read(t, "20", "perftest-suhas-north_ca-0")
+				err1 := read(t, "20", c[1].Name)
 
 				if err1 == nil {
                 //If read successfull while polling exit from go routine
@@ -160,12 +160,12 @@ func main() {
       
 	}()
 
-//This Go Routine polls Tokyo Node
+//This Go Routine polls Third Node
 	go func() {
 		defer wg.Done()
 		defer func(begin time.Time) {
-                //Measures time lapse when data is first seen in Tokyo node
-			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", "perftest-suhas-tokyo-0"}
+                //Measures time lapse when data is first seen in Third node
+			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", c[2].Name}
 			requestCount.With(lvs...).Add(1)
 			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
 			requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
@@ -173,12 +173,12 @@ func main() {
 
 			}(time.Now())
 			for {
-				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", "52.198.14.57")
-				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", "52.198.14.57")
+				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc",c[2].Extipaddress)
+				serverUrlQuery := fmt.Sprintf("http://%s:46658/query",c[2].Extipaddress)
 				conns3 := map[string]*TxConn{}
 				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
-				conns3["perftest-suhas-tokyo-0"] = t
-				err2 := read(t, "20", "perftest-suhas-tokyo-0")
+				conns3[c[2].Name] = t
+				err2 := read(t, "20",c[2].Name)
 				if err2 == nil {
 					//If read successfull while polling exit from go routine
 					return
