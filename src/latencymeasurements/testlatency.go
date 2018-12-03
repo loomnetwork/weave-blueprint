@@ -77,7 +77,7 @@ func main() {
 	}, fieldKeys)
 
 	// default hostport for metrics
-	var hostport = "127.0.0.1:9091"
+	var hostport = "0.0.0.0:9091"
 	host, port, err := net.SplitHostPort(hostport)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "invalid metric address: %s", err)
@@ -158,7 +158,7 @@ func main() {
 				}
 
 			}
-      
+
 	}()
 
 //This Go Routine polls Third Node
@@ -187,12 +187,12 @@ func main() {
 
 			}
 
-			
+
 	}()
 
 	//Exit when polling on all nodes is completes
 	wg.Wait()
-        //prometheus.yaml is configured to scrape metrics from this application 
+        //prometheus.yaml is configured to scrape metrics from this application
 	fmt.Printf("sleeping for final prometheus metrics\n")
 	time.Sleep(3 * time.Second)
 }
