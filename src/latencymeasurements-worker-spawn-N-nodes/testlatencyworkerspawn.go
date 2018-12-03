@@ -18,6 +18,7 @@ import (
 	"sync"
 	"time"
 	"path/filepath"
+	"flag"
 
 
 )
@@ -60,7 +61,7 @@ func worker(c Servers, id int, data string, wg *sync.WaitGroup) (err1 error){
 
 	}(time.Now())
 
-	fmt.Printf("Worker-%d started polling \n", id)
+	//fmt.Printf("Worker-%d started polling \n", id)
 	for {
 		serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc",  c[id].Extipaddress)
 		serverUrlQuery := fmt.Sprintf("http://%s:46658/query",  c[id].Extipaddress)
@@ -89,9 +90,8 @@ func worker(c Servers, id int, data string, wg *sync.WaitGroup) (err1 error){
 
 func main() {
 
-	var wg sync.WaitGroup
-    //Set to two as two nodes are to be polled
 
+	//Set to two as two nodes are to be polled
 
 	fieldKeys := []string{"method", "error", "server"}
 	requestCount = kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{
@@ -100,15 +100,14 @@ func main() {
 		Name:      "request_count",
 		Help:      "Number of requests received.",
 	}, fieldKeys)
-   //Added bucket data point for histogram_quantile
+	//Added bucket data point for histogram_quantile
 	requestLatency = kitprometheus.NewHistogramFrom(stdprometheus.HistogramOpts{
 		Namespace: "loomchain",
 		Subsystem: "tx_service",
 		Name:      "request_latency",
 		Help:      "Total duration of requests",
-		Buckets: []float64{0.001,0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10},
-
-		}, fieldKeys)
+		Buckets:   []float64{0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10},
+	}, fieldKeys)
 	requestLatencySummary = kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
 		Namespace: "loomchain",
 		Subsystem: "tx_service",
@@ -117,7 +116,7 @@ func main() {
 	}, fieldKeys)
 
 	// default hostport for metrics
-	var hostport = "0.0.0.0:9091"
+	var hostport= "0.0.0.0:9091"
 	host, port, err := net.SplitHostPort(hostport)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "invalid metric address: %s", err)
@@ -155,39 +154,53 @@ func main() {
 	}
 
 	fmt.Printf("configdata - %v -%s\n", c, c[0].Extipaddress)
-    var id =0;
-	data := ksuid.New().String()
-	wg.Add(len(c)-1)
 
-	for _, v := range c {
 
-	    if id  == 0 {
 
-			serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", v.Extipaddress)
+	var programCounter= 0;
+	loopcontrol := flag.Int("loop", 10000, "Number of times to loop argument")
+	flag.Parse()
 
-			serverUrlQuery := fmt.Sprintf("http://%s:46658/query", v.Extipaddress)
-			conns1 := map[string]*TxConn{}
+	for programCounter <= *loopcontrol {
+		var id= 0;
+		data := ksuid.New().String()
+		var wg sync.WaitGroup
+		wg.Add(len(c) - 1)
 
-			t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
-			conns1[v.Name] = t
+		for _, v := range c {
 
-			err := write(t, data , v.Name)
-			if err != nil {
-				fmt.Printf("write error -%s\n", err.Error())
+			if id == 0 {
+
+				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", v.Extipaddress)
+
+				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", v.Extipaddress)
+				conns1 := map[string]*TxConn{}
+
+				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
+				conns1[v.Name] = t
+
+				err := write(t, data, v.Name)
+				if err != nil {
+					fmt.Printf("write error -%s\n", err.Error())
+				}
+				//Writing Key Value to First Node in File
+			} else {
+				//Submit task to worker
+				go worker(c, id, data, &wg)
 			}
-			//Writing Key Value to First Node in File
-		} else {
-           //Submit task to worker
-		    go worker(c, id, data, &wg)
-		}
 
-		id ++
+			id ++
+		}
+		//Exit when polling on all nodes is completes
+		wg.Wait()
+		//prometheus.yaml is configured to scrape metrics from this application
+		programCounter++
+
+		fmt.Printf("sleeping for final prometheus metrics\n")
+		time.Sleep(5 * time.Second)
+
 	}
-	//Exit when polling on all nodes is completes
-	wg.Wait()
-        //prometheus.yaml is configured to scrape metrics from this application
-	fmt.Printf("sleeping for final prometheus metrics\n")
-	time.Sleep(5 * time.Second)
+
 }
 
 func read(t *TxConn, data, name string) (err error) {
