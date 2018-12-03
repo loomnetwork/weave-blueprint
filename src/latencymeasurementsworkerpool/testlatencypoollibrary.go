@@ -62,7 +62,7 @@ func work(args...interface{}) interface{} {
 
 	defer wg.Done()
 	defer func(begin time.Time) {
-		//Measures time lapse when data is first seen in Second node
+		//Measures time lapse when data is first seen in ith node
 		lvs := []string{"method", "readpoll", "error", fmt.Sprint(err1 != nil),"server",c[1].Name}
 		requestCount.With(lvs...).Add(1)
 		requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
