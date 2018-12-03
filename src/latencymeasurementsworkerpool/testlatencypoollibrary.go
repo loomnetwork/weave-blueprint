@@ -94,7 +94,7 @@ func work(args...interface{}) interface{} {
 func main() {
 
 
-    //Set to two as two nodes are to be polled
+
 
 
 	fieldKeys := []string{"method", "error", "server"}
