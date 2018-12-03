@@ -16,8 +16,9 @@ import (
 	"os"
 	"sync"
 	"time"
-	"path/filepath"
 	"github.com/segmentio/ksuid"
+	"flag"
+	"path/filepath"
 )
 
 var defaultContract = "BluePrint"
@@ -48,10 +49,6 @@ type MessageData struct {
 */
 
 func main() {
-
-	var wg sync.WaitGroup
-    //Set to two as two nodes are to be polled
-	wg.Add(2)
 
 	fieldKeys := []string{"method", "error", "server"}
 	requestCount = kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{
@@ -95,11 +92,12 @@ func main() {
 			os.Exit(1)
 		}
 	}()
-	//ar c Config
+
 	var c Servers
-	//var s1 Servers
+
 	//conns := map[string]*TxConn{}
 	absPath, _ := filepath.Abs("weave-blueprint/src/latencymeasurements/nodelist.yaml")
+
 	b, err := ioutil.ReadFile(absPath)
 
 	if err != nil {
@@ -115,37 +113,48 @@ func main() {
 	}
 
 	fmt.Printf("configdata - %v -%s\n", c, c[0].Extipaddress)
-	data := ksuid.New().String()
-
-//Writing Key Value to First Node in File
-	serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", c[0].Extipaddress)
-	serverUrlQuery := fmt.Sprintf("http://%s:46658/query", c[0].Extipaddress)
-	conns1 := map[string]*TxConn{}
-
-	t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
-	conns1[c[0].Name] = t
-
-	err = write(t,data, c[0].Name)
-	if err != nil {
-		fmt.Printf("write error -%s\n", err.Error())
-	}
 
 
-//This Go routine polls  Second node
-	go func() {
-		defer wg.Done()
-		defer func(begin time.Time) {
-                //Measures time lapse when data is first seen in Second node
-			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", c[1].Name}
-			requestCount.With(lvs...).Add(1)
-			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-			requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
+	var programCounter = 0;
+	loopcontrol := flag.Int("loop", 10000, "Number of times to loop argument")
+	flag.Parse()
+	fmt.Println("Will Collect Following Number of Data Sets ", *loopcontrol)
+
+	for programCounter <= *loopcontrol {
+
+		var wg sync.WaitGroup
+		//Set to two as two nodes are to be polled
+		wg.Add(2)
+        //Generating new unique keys for each run
+		data := ksuid.New().String()
+		//Writing Key Value to First Node in File
+		serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", c[0].Extipaddress)
+		serverUrlQuery := fmt.Sprintf("http://%s:46658/query", c[0].Extipaddress)
+		conns1 := map[string]*TxConn{}
+
+		t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
+		conns1[c[0].Name] = t
+
+		err = write(t, data, c[0].Name)
+		if err != nil {
+			fmt.Printf("write error -%s\n", err.Error())
+		}
+
+		//This Go routine polls  Second node
+		go func() {
+			defer wg.Done()
+			defer func(begin time.Time) {
+				//Measures time lapse when data is first seen in Second node
+				lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", c[1].Name}
+				requestCount.With(lvs...).Add(1)
+				requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+				requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
 
 			}(time.Now())
 
 			for {
-				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc",  c[1].Extipaddress)
-				serverUrlQuery := fmt.Sprintf("http://%s:46658/query",  c[1].Extipaddress)
+				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", c[1].Extipaddress)
+				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", c[1].Extipaddress)
 				conns2 := map[string]*TxConn{}
 				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 				conns2[c[1].Name] = t
@@ -153,33 +162,32 @@ func main() {
 				err1 := read(t, data, c[1].Name)
 
 				if err1 == nil {
-                //If read successfull while polling exit from go routine
+					//If read successfull while polling exit from go routine
 					return
 				}
 
 			}
 
-	}()
+		}()
 
-//This Go Routine polls Third Node
-	go func() {
-		defer wg.Done()
-		defer func(begin time.Time) {
-                //Measures time lapse when data is first seen in Third node
-			lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", c[2].Name}
-			requestCount.With(lvs...).Add(1)
-			requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
-			requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
-
+		//This Go Routine polls Third Node
+		go func() {
+			defer wg.Done()
+			defer func(begin time.Time) {
+				//Measures time lapse when data is first seen in Third node
+				lvs := []string{"method", "readpoll", "error", fmt.Sprint(err != nil), "server", c[2].Name}
+				requestCount.With(lvs...).Add(1)
+				requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+				requestLatencySummary.With(lvs...).Observe(time.Since(begin).Seconds())
 
 			}(time.Now())
 			for {
-				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc",c[2].Extipaddress)
-				serverUrlQuery := fmt.Sprintf("http://%s:46658/query",c[2].Extipaddress)
+				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", c[2].Extipaddress)
+				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", c[2].Extipaddress)
 				conns3 := map[string]*TxConn{}
 				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
 				conns3[c[2].Name] = t
-				err2 := read(t,data,c[2].Name)
+				err2 := read(t, data, c[2].Name)
 				if err2 == nil {
 					//If read successfull while polling exit from go routine
 					return
@@ -187,15 +195,18 @@ func main() {
 
 			}
 
+		}()
 
-	}()
+		//Exit when polling on all nodes is completes
+		wg.Wait()
+		//prometheus.yaml is configured to scrape metrics from this application
+		fmt.Printf("sleeping for final prometheus metrics\n")
+		time.Sleep(5 * time.Second)
 
-	//Exit when polling on all nodes is completes
-	wg.Wait()
-        //prometheus.yaml is configured to scrape metrics from this application
-	fmt.Printf("sleeping for final prometheus metrics\n")
-	time.Sleep(3 * time.Second)
-}
+		programCounter++
+
+		}
+	}
 
 func read(t *TxConn, data, name string) (err error) {
 	defer func(begin time.Time) {
