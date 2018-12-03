@@ -70,7 +70,7 @@ func work(args...interface{}) interface{} {
 
 	}(time.Now())
 
-	fmt.Printf("Worker-%d started polling \n", id)
+	//fmt.Printf("Worker-%d started polling \n", id)
 	for {
 		serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc",  c[id].Extipaddress)
 		serverUrlQuery := fmt.Sprintf("http://%s:46658/query",  c[id].Extipaddress)
