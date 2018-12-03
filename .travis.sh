@@ -14,6 +14,7 @@ make protobuf-install
 make deps
 make
 make cli
+make latency
 
 cd build
 
