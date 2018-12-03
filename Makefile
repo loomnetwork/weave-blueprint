@@ -30,15 +30,35 @@ protoc-gen-gogo:
 cli:
 	go build -o build/blueprint src/cli/main.go
 
+latency: latencycmd latencymeasurements latencymeasurementsworkerpool latencymeasurements-worker-spawn-N-nodes
+
 latencycmd:
+	go get \
+		gopkg.in/yaml.v2 \
+		github.com/loomnetwork/weave-blueprint/src
 	go build -o latencycmd src/latencycmd/*.go
-	
+
 latencymeasurements:
 	go get \
 		gopkg.in/yaml.v2 \
-                github.com/segmentio/ksuid \
+		github.com/segmentio/ksuid \
 		github.com/loomnetwork/weave-blueprint/src
 	go build -o latencymeasurements src/latencymeasurements/*.go
+
+latencymeasurementsworkerpool:
+	go get \
+		gopkg.in/yaml.v2 \
+		github.com/segmentio/ksuid \
+		github.com/stefantalpalaru/pool \
+		github.com/loomnetwork/weave-blueprint/src
+	go build -o latencymeasurementsworkerpool src/latencymeasurementsworkerpool/*.go
+
+latencymeasurements-worker-spawn-N-nodes:
+	go get \
+		gopkg.in/yaml.v2 \
+		github.com/segmentio/ksuid \
+		github.com/loomnetwork/weave-blueprint/src
+	go build -o latencymeasurements-worker-spawn-N-nodes src/latencymeasurements-worker-spawn-N-nodes/*.go
 
 %.pb.go: %.proto protoc-gen-gogo
 	$(PROTOC) --gogo_out=src $<
@@ -69,6 +89,10 @@ clean:
 		protoc-gen-gogo \
 		src/types/types.pb.go \
 		testdata/test.pb.go \
+		latencycmd \
+		latencymeasurements \
+		latencymeasurementsworkerpool \
+		latencymeasurements-worker-spawn-N-nodes
 
 protobuf-install:
 ifeq ($(BREW),)

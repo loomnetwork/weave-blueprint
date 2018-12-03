@@ -24,3 +24,9 @@ protoc-gen-gogo
 build
 loom.log
 contract.log
+
+.tmpgopath
+latencycmd
+latencymeasurements
+latencymeasurementsworkerpool
+latencymeasurements-worker-spawn-N-nodes
