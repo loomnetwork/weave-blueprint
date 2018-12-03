@@ -20,7 +20,7 @@ import (
     "time"
     "path/filepath"
 	"runtime"
-
+    "flag"
 	)
 
 
@@ -93,7 +93,7 @@ func work(args...interface{}) interface{} {
 
 func main() {
 
-	var wg sync.WaitGroup
+
     //Set to two as two nodes are to be polled
 
 
@@ -159,48 +159,59 @@ func main() {
 	}
 
 	fmt.Printf("configdata - %v -%s\n", c, c[0].Extipaddress)
-    var id =0;
 
-	wg.Add(len(c)-1)
-	var mypool = pool.New(len(c)-1) // number of workers
+	var programCounter = 0;
+	loopcontrol := flag.Int("loop", 10000, "Number of times to loop argument")
+	flag.Parse()
+	fmt.Println("Will Collect Following Number of Data Sets ", *loopcontrol)
+	var mypool= pool.New(len(c) - 1) // number of workers
 	cpus := runtime.NumCPU()
+	//Multiple cores support for parallel execution
 	runtime.GOMAXPROCS(cpus)
 	mypool.Run()
-	data := ksuid.New().String()
 
-	for _, v := range c {
+	for programCounter <= *loopcontrol {
+		var wg sync.WaitGroup
+		var id= 0;
+		wg.Add(len(c) - 1)
 
-	    if id  == 0 {
+		data := ksuid.New().String()
 
-			serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", v.Extipaddress)
+		for _, v := range c {
 
-			serverUrlQuery := fmt.Sprintf("http://%s:46658/query", v.Extipaddress)
-			conns1 := map[string]*TxConn{}
+			if id == 0 {
 
-			t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
-			conns1[v.Name] = t
+				serverUrlRpc := fmt.Sprintf("http://%s:46658/rpc", v.Extipaddress)
 
+				serverUrlQuery := fmt.Sprintf("http://%s:46658/query", v.Extipaddress)
+				conns1 := map[string]*TxConn{}
 
+				t := NewtxConn(serverUrlRpc, serverUrlQuery, defaultContract)
+				conns1[v.Name] = t
 
-			err := write(t, data, v.Name)
-			if err != nil {
-				fmt.Printf("write error -%s\n", err.Error())
+				err := write(t, data, v.Name)
+				if err != nil {
+					fmt.Printf("write error -%s\n", err.Error())
+				}
+				//Writing Key Value to First Node in File
+			} else {
+				//Submit task to worker
+				mypool.Add(work, c, id, data, &wg)
 			}
-			//Writing Key Value to First Node in File
-		} else {
-           //Submit task to worker
-			mypool.Add(work,c,id,data,&wg)
-		}
 
-		id ++
+			id ++
+		}
+		//Exit when polling on all nodes is completes
+		wg.Wait()
+		programCounter++
+		//prometheus.yaml is configured to scrape metrics from this application
+		fmt.Printf("sleeping for final prometheus metrics\n")
+		time.Sleep(5 * time.Second)
 	}
-	//Exit when polling on all nodes is completes
-	wg.Wait()
+
+
 	mypool.Stop()
-        //prometheus.yaml is configured to scrape metrics from this application
-	fmt.Printf("sleeping for final prometheus metrics\n")
-	time.Sleep(5 * time.Second)
-}
+	}
 
 func read(t *TxConn, data, name string) (err error) {
 	defer func(begin time.Time) {
