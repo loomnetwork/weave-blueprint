@@ -37,10 +37,10 @@ this will generate private key file named "key" to be further
 
 ## Set value for user
 ```bash
-./blueprint call create-acct -u <account-name> -v <any-integer> -p key
+./blueprint call set -u <account-name> -v <any-integer> -p key
 ```
 
 ## Get value for user
 ```bash
-./blueprint call create-acct -u <account-name> -p key
+./blueprint call get -u <account-name> -p key
 ```
