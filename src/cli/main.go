@@ -9,17 +9,17 @@ import (
 	"os"
 	"types"
 
+	"github.com/loomnetwork/go-loom/cli"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ed25519"
-	"github.com/loomnetwork/go-loom/cli"
 )
 
 type MessageData struct {
 	Value int
 }
 
-func getKeygenCmd() (*cobra.Command) {
+func getKeygenCmd() *cobra.Command {
 	var privFile string
 	keygenCmd := &cobra.Command{
 		Use:           "genkey",
@@ -54,10 +54,8 @@ func main() {
 
 	keygenCmd := getKeygenCmd()
 
-	callCmd := cli.ContractCallCommand()
+	callCmd := cli.ContractCallCommand("")
 	rootCmd.AddCommand(callCmd)
-
-
 
 	rootCmd.AddCommand(keygenCmd)
 
