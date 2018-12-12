@@ -26,21 +26,21 @@ After running loom, open new terminal tab and and blueprint as follows.
 ## Generate private key
 ```bash
 cd build
-./blueprint genkey 
+./blueprint genkey
 ```
 this will generate private key file named "key" to be further
 
 ## Create user account
 ```bash
-./blueprint call create-acct -u <account-name> -p key
+./blueprint call create-acct -u <account-name> -k key
 ```
 
 ## Set value for user
 ```bash
-./blueprint call set -u <account-name> -v <any-integer> -p key
+./blueprint call set -u <account-name> -v <any-integer> -k key
 ```
 
 ## Get value for user
 ```bash
-./blueprint call get -u <account-name> -p key
+./blueprint call get -u <account-name> -k key
 ```
