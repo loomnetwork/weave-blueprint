@@ -13,6 +13,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
+HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
 
 .PHONY: all clean test lint deps proto
 
@@ -52,6 +53,7 @@ deps:
 		github.com/pkg/errors \
 		github.com/grpc-ecosystem/go-grpc-prometheus \
 		github.com/go-kit/kit/log
+	cd $(HASHICORP_DIR) && git checkout f4c3476bd38585f9ec669d10ed1686abd52b9961
 
 clean:
 	go clean
