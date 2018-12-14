@@ -1,6 +1,5 @@
 PKG = github.com/loomnetwork/weave-blueprint
 PROTOC = protoc --plugin=./protoc-gen-gogo -Isrc -I/usr/local/include
-HASHICORP_DIR = HASHICORP_DIR = $(GOPATH)/src/github.com/hashicorp/go-plugin
 PROTOBUF_VERSION = 3.5.1
 UNAME_S := $(shell uname -s)
 CURRENT_DIRECTORY = $(shell pwd)
@@ -14,6 +13,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
+HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
 
 .PHONY: all clean test lint deps proto
 
