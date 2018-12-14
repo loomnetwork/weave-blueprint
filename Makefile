@@ -1,5 +1,6 @@
 PKG = github.com/loomnetwork/weave-blueprint
 PROTOC = protoc --plugin=./protoc-gen-gogo -Isrc -I/usr/local/include
+HASHICORP_DIR = HASHICORP_DIR = $(GOPATH)/src/github.com/hashicorp/go-plugin
 PROTOBUF_VERSION = 3.5.1
 UNAME_S := $(shell uname -s)
 CURRENT_DIRECTORY = $(shell pwd)
@@ -52,6 +53,7 @@ deps:
 		github.com/pkg/errors \
 		github.com/grpc-ecosystem/go-grpc-prometheus \
 		github.com/go-kit/kit/log
+	cd $(HASHICORP_DIR) && git checkout f4c3476bd38585f9ec669d10ed1686abd52b9961
 
 clean:
 	go clean
