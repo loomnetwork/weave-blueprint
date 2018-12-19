@@ -52,7 +52,9 @@ deps:
 		github.com/hashicorp/go-plugin \
 		github.com/pkg/errors \
 		github.com/grpc-ecosystem/go-grpc-prometheus \
-		github.com/go-kit/kit/log
+		github.com/go-kit/kit/log \
+		github.com/loomnetwork/yubihsm-go \
+		github.com/ethereum/go-ethereum/crypto/secp256k1
 	cd $(HASHICORP_DIR) && git checkout f4c3476bd38585f9ec669d10ed1686abd52b9961
 
 clean:
