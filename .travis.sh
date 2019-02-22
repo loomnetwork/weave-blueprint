@@ -37,3 +37,4 @@ loom genkey -k priv_key -a pub_key
 pkill -f loom
 
 cat build/run.log
+trap "cat build/run.log" EXIT
