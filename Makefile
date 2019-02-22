@@ -3,7 +3,6 @@ PROTOC = protoc --plugin=./protoc-gen-gogo -Isrc -I/usr/local/include
 PROTOBUF_VERSION = 3.5.1
 UNAME_S := $(shell uname -s)
 CURRENT_DIRECTORY = $(shell pwd)
-GETH_GIT_REV = f9c06695672d0be294447272e822db164739da67
 
 
 ifeq ($(UNAME_S),Linux)
