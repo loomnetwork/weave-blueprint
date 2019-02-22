@@ -14,6 +14,13 @@ endif
 
 export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
 HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
+GO_ETHEREUM_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/ethereum/go-ethereum
+
+
+ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
+
+$(GO_ETHEREUM_DIR):
+	git clone -q https://github.com/loomnetwork/go-ethereum.git $@
 
 .PHONY: all clean test lint deps proto
 
@@ -42,7 +49,7 @@ test: proto
 lint:
 	golint ./...
 
-deps:
+deps: $(GO_ETHEREUM_DIR)
 	go get \
 		github.com/gogo/protobuf/jsonpb \
 		github.com/gogo/protobuf/proto \
@@ -55,6 +62,7 @@ deps:
 		github.com/go-kit/kit/log \
 		github.com/loomnetwork/yubihsm-go \
 		github.com/ethereum/go-ethereum/crypto/secp256k1
+	cd $(GO_ETHEREUM_DIR) && git checkout master && git pull && git checkout $(ETHEREUM_GIT_REV)
 	cd $(HASHICORP_DIR) && git checkout f4c3476bd38585f9ec669d10ed1686abd52b9961
 
 clean:
