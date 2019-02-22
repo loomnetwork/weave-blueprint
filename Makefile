@@ -12,19 +12,20 @@ ifeq ($(UNAME_S),Darwin)
 	BREW = $(shell which brew)
 endif
 
+
+.PHONY: all clean test lint deps proto
+
+all: contracts cli
+
 export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
 HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
 GO_ETHEREUM_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/ethereum/go-ethereum
-
 
 ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
 
 $(GO_ETHEREUM_DIR):
 	git clone -q https://github.com/loomnetwork/go-ethereum.git $@
 
-.PHONY: all clean test lint deps proto
-
-all: contracts cli
 
 contracts: build/contracts/blueprint.0.0.1
 
