@@ -28,15 +28,8 @@ ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
 $(GO_ETHEREUM_DIR):
 	git clone -q https://github.com/loomnetwork/go-ethereum.git $@
 
-<<<<<<< HEAD
 $(SSHA3_DIR):
 	git clone -q https://github.com/loomnetwork/go-solidity-sha3.git $@
-
-.PHONY: all clean test lint deps proto
-
-all: contracts cli
-=======
->>>>>>> 3c1f6ea896a87095be6af83e31cd98e37562bd69
 
 contracts: build/contracts/blueprint.0.0.1
 
