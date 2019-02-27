@@ -3,6 +3,8 @@ PROTOC = protoc --plugin=./protoc-gen-gogo -Isrc -I/usr/local/include
 PROTOBUF_VERSION = 3.5.1
 UNAME_S := $(shell uname -s)
 CURRENT_DIRECTORY = $(shell pwd)
+GETH_GIT_REV = f9c06695672d0be294447272e822db164739da67
+
 
 ifeq ($(UNAME_S),Linux)
 	PLATFORM = linux
@@ -11,6 +13,10 @@ ifeq ($(UNAME_S),Darwin)
 	PLATFORM = osx
 	BREW = $(shell which brew)
 endif
+
+.PHONY: all clean test lint deps proto
+
+all: contracts cli
 
 export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
 HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
@@ -22,12 +28,15 @@ ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
 $(GO_ETHEREUM_DIR):
 	git clone -q https://github.com/loomnetwork/go-ethereum.git $@
 
+<<<<<<< HEAD
 $(SSHA3_DIR):
 	git clone -q https://github.com/loomnetwork/go-solidity-sha3.git $@
 
 .PHONY: all clean test lint deps proto
 
 all: contracts cli
+=======
+>>>>>>> 3c1f6ea896a87095be6af83e31cd98e37562bd69
 
 contracts: build/contracts/blueprint.0.0.1
 
@@ -54,19 +63,26 @@ lint:
 
 deps: $(GO_ETHEREUM_DIR) $(SSHA3_DIR)
 	go get \
+		golang.org/x/crypto/ripemd160 \
+		golang.org/x/crypto/sha3 \
 		github.com/gogo/protobuf/jsonpb \
 		github.com/gogo/protobuf/proto \
+		github.com/gorilla/websocket \
+		github.com/phonkee/go-pubsub \
+		google.golang.org/grpc \
 		github.com/spf13/cobra \
-		github.com/gomodule/redigo/redis \
-		github.com/loomnetwork/go-loom \
 		github.com/hashicorp/go-plugin \
+		github.com/stretchr/testify/assert \
+		github.com/go-kit/kit/log \
 		github.com/pkg/errors \
+		github.com/loomnetwork/go-loom \
 		github.com/grpc-ecosystem/go-grpc-prometheus \
 		github.com/go-kit/kit/log \
 		github.com/loomnetwork/yubihsm-go \
-		github.com/ethereum/go-ethereum/crypto/secp256k1
+		gopkg.in/check.v1
 	cd $(GO_ETHEREUM_DIR) && git checkout master && git pull && git checkout $(ETHEREUM_GIT_REV)
 	cd $(HASHICORP_DIR) && git checkout f4c3476bd38585f9ec669d10ed1686abd52b9961
+
 
 clean:
 	go clean
