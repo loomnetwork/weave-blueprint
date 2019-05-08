@@ -7,6 +7,8 @@ curl -OL https://storage.googleapis.com/private.delegatecall.com/loom/linux/buil
 chmod +x loom
 sudo mv loom /usr/local/bin/loom
 
+ln -s `pwd` $GOPATH/github.com/loomnetwork/weave-blueprint
+
 # Install protobuf
 make protobuf-install
 

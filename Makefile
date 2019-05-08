@@ -2,7 +2,6 @@ PKG = github.com/loomnetwork/weave-blueprint
 PROTOC = protoc --plugin=./protoc-gen-gogo -Isrc -I/usr/local/include
 PROTOBUF_VERSION = 3.5.1
 UNAME_S := $(shell uname -s)
-CURRENT_DIRECTORY = $(shell pwd)
 GETH_GIT_REV = f9c06695672d0be294447272e822db164739da67
 
 
@@ -18,10 +17,9 @@ endif
 
 all: contracts cli
 
-export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
-HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
-GO_ETHEREUM_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/ethereum/go-ethereum
-SSHA3_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/miguelmota/go-solidity-sha3
+HASHICORP_DIR = $(GOPATH)github.com/hashicorp/go-plugin
+GO_ETHEREUM_DIR = $(GOPATH)/github.com/ethereum/go-ethereum
+SSHA3_DIR = $(GOPATH)/github.com/miguelmota/go-solidity-sha3
 
 ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
 
