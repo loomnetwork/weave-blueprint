@@ -17,7 +17,7 @@ endif
 
 all: contracts cli
 
-HASHICORP_DIR = $(GOPATH)github.com/hashicorp/go-plugin
+HASHICORP_DIR = $(GOPATH)/github.com/hashicorp/go-plugin
 GO_ETHEREUM_DIR = $(GOPATH)/github.com/ethereum/go-ethereum
 SSHA3_DIR = $(GOPATH)/github.com/miguelmota/go-solidity-sha3
 
