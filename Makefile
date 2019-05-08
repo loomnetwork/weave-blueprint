@@ -29,9 +29,6 @@ $(GO_ETHEREUM_DIR):
 $(SSHA3_DIR):
 	git clone -q https://github.com/loomnetwork/go-solidity-sha3.git $@
 
-$(HASHICORP_DIR):
-	git clone -q https://github.com/hashicorp/go-plugin.git $@
-
 contracts: build/contracts/blueprint.0.0.1
 
 build/contracts/blueprint.0.0.1: proto
@@ -55,7 +52,7 @@ test: proto
 lint:
 	golint ./...
 
-deps: $(GO_ETHEREUM_DIR) $(SSHA3_DIR) $(HASHICORP_DIR)
+deps: $(GO_ETHEREUM_DIR) $(SSHA3_DIR)
 	go get \
 		golang.org/x/crypto/ripemd160 \
 		golang.org/x/crypto/sha3 \
@@ -65,6 +62,7 @@ deps: $(GO_ETHEREUM_DIR) $(SSHA3_DIR) $(HASHICORP_DIR)
 		github.com/phonkee/go-pubsub \
 		google.golang.org/grpc \
 		github.com/spf13/cobra \
+		github.com/hashicorp/go-plugin \
 		github.com/stretchr/testify/assert \
 		github.com/go-kit/kit/log \
 		github.com/pkg/errors \
