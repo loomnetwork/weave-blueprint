@@ -10,11 +10,11 @@ sudo mv loom /usr/local/bin/loom
 # Install protobuf
 make protobuf-install
 
-echo $GOPATH
-echo `pwd`
-
 # Run the build
 make deps
+
+ls -la $GOPATH/src/github.com/
+
 make
 make cli
 

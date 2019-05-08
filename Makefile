@@ -17,9 +17,9 @@ endif
 
 all: contracts cli
 
-HASHICORP_DIR = $(GOPATH)/github.com/hashicorp/go-plugin
-GO_ETHEREUM_DIR = $(GOPATH)/github.com/ethereum/go-ethereum
-SSHA3_DIR = $(GOPATH)/github.com/miguelmota/go-solidity-sha3
+HASHICORP_DIR = $(GOPATH)/src/github.com/hashicorp/go-plugin
+GO_ETHEREUM_DIR = $(GOPATH)/src/github.com/ethereum/go-ethereum
+SSHA3_DIR = $(GOPATH)/src/github.com/miguelmota/go-solidity-sha3
 
 ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
 
