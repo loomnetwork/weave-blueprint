@@ -4,7 +4,7 @@ PROTOBUF_VERSION = 3.5.1
 UNAME_S := $(shell uname -s)
 CURRENT_DIRECTORY = $(shell pwd)
 GETH_GIT_REV = f9c06695672d0be294447272e822db164739da67
-
+BTCD_GIT_REV = 7d2daa5bfef28c5e282571bc06416516936115ee
 
 ifeq ($(UNAME_S),Linux)
 	PLATFORM = linux
@@ -22,6 +22,7 @@ export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
 HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
 GO_ETHEREUM_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/ethereum/go-ethereum
 SSHA3_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/miguelmota/go-solidity-sha3
+BTCD_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/btcsuite/btcd
 
 ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
 
@@ -72,10 +73,11 @@ deps: $(GO_ETHEREUM_DIR) $(SSHA3_DIR)
 		github.com/grpc-ecosystem/go-grpc-prometheus \
 		github.com/go-kit/kit/log \
 		github.com/loomnetwork/yubihsm-go \
-		gopkg.in/check.v1
+		gopkg.in/check.v1 \
+		github.com/btcsuite/btcd
 	cd $(GO_ETHEREUM_DIR) && git checkout master && git pull && git checkout $(ETHEREUM_GIT_REV)
 	cd $(HASHICORP_DIR) && git checkout f4c3476bd38585f9ec669d10ed1686abd52b9961
-
+	cd $(BTCD_DIR) && git checkout $(BTCD_GIT_REV)
 
 clean:
 	go clean
