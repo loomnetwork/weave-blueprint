@@ -79,7 +79,7 @@ func main() {
 			return nil
 		},
 	}
-	createAccCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
+	createAccCmd.Flags().StringVar(&user, "user", "loom", "user")
 
 	var value int
 	saveStateCmd := &cobra.Command{
@@ -112,7 +112,7 @@ func main() {
 		},
 	}
 	saveStateCmd.Flags().IntVarP(&value, "value", "v", 0, "integer value")
-	saveStateCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
+	saveStateCmd.Flags().StringVar(&user, "user", "loom", "user")
 
 	getStateCmd := &cobra.Command{
 		Use:           "get",
@@ -138,7 +138,7 @@ func main() {
 			return nil
 		},
 	}
-	getStateCmd.Flags().StringVarP(&user, "user", "u", "loom", "user")
+	getStateCmd.Flags().StringVar(&user, "user", "loom", "user")
 
 	callCmd.AddCommand(createAccCmd)
 	callCmd.AddCommand(saveStateCmd)

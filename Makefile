@@ -3,8 +3,6 @@ PROTOC = protoc --plugin=./protoc-gen-gogo -Isrc -I/usr/local/include
 PROTOBUF_VERSION = 3.5.1
 UNAME_S := $(shell uname -s)
 CURRENT_DIRECTORY = $(shell pwd)
-GETH_GIT_REV = f9c06695672d0be294447272e822db164739da67
-
 
 ifeq ($(UNAME_S),Linux)
 	PLATFORM = linux
@@ -22,8 +20,13 @@ export GOPATH=$(CURRENT_DIRECTORY)/tmpgopath:$(CURRENT_DIRECTORY)
 HASHICORP_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/hashicorp/go-plugin
 GO_ETHEREUM_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/ethereum/go-ethereum
 SSHA3_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/miguelmota/go-solidity-sha3
+YUBIHSM_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/certusone/yubihsm-go
+BTCD_DIR = $(CURRENT_DIRECTORY)/tmpgopath/src/github.com/btcsuite/btcd
 
 ETHEREUM_GIT_REV = f9c06695672d0be294447272e822db164739da67
+GETH_GIT_REV = f9c06695672d0be294447272e822db164739da67
+BTCD_GIT_REV = 7d2daa5bfef28c5e282571bc06416516936115ee
+YUBIHSM_REV = 0299fd5d703d2a576125b414abbe172eaec9f65e
 
 $(GO_ETHEREUM_DIR):
 	git clone -q https://github.com/loomnetwork/go-ethereum.git $@
@@ -71,11 +74,13 @@ deps: $(GO_ETHEREUM_DIR) $(SSHA3_DIR)
 		github.com/loomnetwork/go-loom \
 		github.com/grpc-ecosystem/go-grpc-prometheus \
 		github.com/go-kit/kit/log \
-		github.com/loomnetwork/yubihsm-go \
+		github.com/certusone/yubihsm-go \
+		github.com/btcsuite/btcd \
 		gopkg.in/check.v1
 	cd $(GO_ETHEREUM_DIR) && git checkout master && git pull && git checkout $(ETHEREUM_GIT_REV)
 	cd $(HASHICORP_DIR) && git checkout f4c3476bd38585f9ec669d10ed1686abd52b9961
-
+	cd $(BTCD_DIR) && git checkout $(BTCD_GIT_REV)
+	cd $(YUBIHSM_DIR) && git checkout master && git pull && git checkout $(YUBIHSM_REV)
 
 clean:
 	go clean
